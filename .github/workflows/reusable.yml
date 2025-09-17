@@ -10,9 +10,15 @@ on:
             # some-secret:
             #     required: false
             #     type: string
+        outputs:
+            result:
+                description: The result of the deployment operation.
+                value: ${{jobs.deploy.outputs.outcome}}
 jobs:
     deploy:
         runs-on: ubuntu-latest
+        outputs: 
+            outcome: ${{steps.set-result.outputs.step-result}}
         steps:
             - name: Download artifact
               uses: actions/download-artifact@v4
@@ -20,3 +26,6 @@ jobs:
                 name: ${{inputs.artifact-name}}
             - name: Output Information
               run: echo "Deploying and uploading.."
+            - name: Set output result
+              id: set-result
+              run: echo "step-result=success >> $GITHUB_OUTPUT"
